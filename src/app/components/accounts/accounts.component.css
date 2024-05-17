@@ -1,0 +1,13 @@
+.operations-history {
+  height: 500px;
+  overflow-y: auto;
+}
+
+.loading-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  background: rgba(191, 191, 191, 0.38);
+  border-radius: 10px;
+}

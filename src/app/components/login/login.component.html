@@ -1,0 +1,21 @@
+<!--Login form with bootstrap-->
+<div class="container row">
+  <div class="card col-md-6 col-12 offset-md-3">
+    <div class="card-body">
+      <h1 class="text-center mb-3">Login</h1>
+      <form [formGroup]="formGroup" (ngSubmit)="onSubmit()">
+        <div class="form-group mb-3">
+          <input type="text" class="form-control" formControlName="username" name="username" placeholder="Username"
+                 autocomplete="off">
+        </div>
+        <div class="form-group mb-3">
+          <input type="password" class="form-control" formControlName="password" name="password" placeholder="Password"
+                 autocomplete="new-password">
+        </div>
+        <div class="d-flex justify-content-center">
+          <input type="submit" class="btn btn-primary btn-block" [disabled]="formGroup.invalid" value="Login">
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

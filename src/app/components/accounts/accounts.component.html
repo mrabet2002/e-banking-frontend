@@ -1,0 +1,126 @@
+<!--tow columns the first one contians a card with a search input in top when search the deatails of te typed account id will showen and alsow a new card will be showen in the second column where the user could do transactions (debit credit ...) -->
+<div class="row">
+  <div class="col-md-6">
+    <div class="card">
+      <div class="card-header">
+        <h4>Search Account</h4>
+      </div>
+      <div class="card-body">
+        <form class="row" (ngSubmit)="onSubmit()">
+          <div class="col-sm-9">
+            <input type="text" class="form-control" [formControl]="accountIdFormControl" name="account_id"
+                   placeholder="Account ID">
+          </div>
+          <div class="col-sm-3">
+            <button type="submit" class="btn btn-primary" [disabled]="accountIdFormControl.invalid">Search</button>
+          </div>
+        </form>
+        <ng-container *ngIf="accountId && (account$ | async) as account">
+          <!--        show account details as attr: value-->
+          <div class="h5 mt-3 p-3 bg-secondary-subtle rounded">Account Details</div>
+          <div class="p-2">
+            <div class="d-flex align-items-center justify-content-between">
+              <div class="text-bold"><strong>Id</strong></div>
+              <div class="">{{ account.id }}</div>
+            </div>
+            <hr/>
+            <div class="d-flex align-items-center justify-content-between">
+              <div class="text-bold"><strong>Customer</strong></div>
+              <div class="">{{ account.customer.name }}</div>
+            </div>
+            <hr/>
+            <div class="d-flex align-items-center justify-content-between">
+              <div class="text-bold"><strong>Balance</strong></div>
+              <div class="">{{ account.balance }} {{ account.currency }}</div>
+            </div>
+            <hr/>
+            <div class="d-flex align-items-center justify-content-between">
+              <div class="text-bold"><strong>Status</strong></div>
+              <div class="">{{ account.status }}</div>
+            </div>
+          </div>
+          <ng-container *ngIf="accountError$ | async as error">
+            <div class="alert alert-danger mt-3">{{ error }}</div>
+          </ng-container>
+        </ng-container>
+      </div>
+
+    </div>
+  </div>
+  <ng-container *ngIf="accountId && (account$ | async) as account">
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header">
+          <h4>Make Operation</h4>
+        </div>
+        <div class="card-body">
+          <form>
+            <div class="form-group">
+              <label for="type">Type</label>
+              <select class="form-control mb-2" id="type" [(ngModel)]="type" name="type">
+                <option value="debit">Debit</option>
+                <option value="credit">Credit</option>
+                <option value="transfer">Transfer</option>
+              </select>
+            </div>
+            <ng-container *ngIf="type == 'transfer'">
+              <label for="amount">Destination account id</label>
+              <input type="text" class="form-control mb-2" id="destination" [formControl]="destination"
+                     name="destination"
+                     placeholder="Destination account">
+            </ng-container>
+            <div class="form-group">
+              <label for="amount">Amount</label>
+              <input type="number" class="form-control mb-2" id="amount" [formControl]="amount" name="amount"
+                     placeholder="Amount">
+            </div>
+            <button type="submit" class="btn btn-primary mt-3"
+                    (click)="onSubmitOperation()" [disabled]="!isOperationValid(account.balance)">Submit
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!--      List of operations as cards each card contains in the body the operation description and date of create -->
+      <div class="card mt-3">
+        <div class="card-header">
+          <h4>Operations</h4>
+        </div>
+        <div class="card-body">
+          <ng-container *ngIf="operations$ | async as operations;">
+            <div class="operations-history" (scrollend)="onScroll(operations.totalPages)">
+              <div *ngFor="let operation of operations.content" class="card mb-2">
+                <div class="card-body">
+                  <div class="d-flex align-items-center justify-content-between">
+                    <div class="text-bold"><strong>{{ operation.type }}</strong></div>
+                    <div class="">{{ operation.amount }} {{ account.currency }}</div>
+                  </div>
+                  <hr/>
+                  <!--                Description-->
+                  <!--                <div class="d-flex align-items-center justify-content-between">-->
+                  <!--                  <div class="">{{ operation.description }}</div>-->
+                  <!--                </div>-->
+                  <div class="d-flex align-items-center justify-content-between">
+                    <div class="text-bold"><strong>Date</strong></div>
+                    <div class="">{{ operation.date | date }}</div>
+                  </div>
+                </div>
+              </div>
+              <div class="text-center loading-section mt-3" *ngIf="loadingOperations">
+                <div class="spinner-border" role="status">
+                </div>
+              </div>
+              <ng-template #loading>
+                <div class="text-center">
+                  <div class="spinner-border" role="status">
+                    <span class="sr-only">Loading...</span>
+                  </div>
+                </div>
+              </ng-template>
+            </div>
+          </ng-container>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+</div>

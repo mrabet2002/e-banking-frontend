@@ -1,0 +1,70 @@
+<div class="card">
+    <div class="card-header">
+        <div class="d-flex justify-content-between align-items-center">
+            <div class="title d-flex justify-content-start align-items-center">
+                <strong>Customers</strong>
+                <a class="ms-2 btn btn-primary" routerLink="add">
+                    <i class="bi bi-person-plus-fill"></i>
+                </a>
+            </div>
+            <div class="input-group w-50" (input)="search($event)">
+                <span class="input-group-text" id="search">
+                    <i class="bi bi-search"></i>
+                </span>
+                <input type="text" class="form-control" placeholder="Search" aria-label="Search"
+                    aria-describedby="search">
+            </div>
+        </div>
+    </div>
+
+    <div class="card-body">
+        <ng-container *ngIf="{customers: customers$ | async, customersError: customersError$ | async} as model">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">ID</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Email</th>
+                        <th scope="col">Actions</th>
+                    </tr>
+                </thead>
+                <tbody *ngIf="!model.customersError && model.customers as customers; else loading">
+                    <tr *ngFor="let customer of customers.content">
+                        <td>{{customer.id}}</td>
+                        <td>{{customer.name}}</td>
+                        <td>{{customer.email}}</td>
+                        <td>
+                            <a class="ms-2 btn btn-danger" (click)="deleteCustomer(customer)">
+                                <i class="bi bi-person-dash-fill"></i>
+                            </a>
+                            <a class="ms-2 btn btn-info" routerLink="edit/{{customer.id}}">
+                                <i class="bi bi-person-fill-gear"></i>
+                            </a>
+                        </td>
+                    </tr>
+                </tbody>
+
+                <tbody *ngIf="model.customersError as error">
+                    <tr>
+                        <td colspan="4" class="text-danger">{{error}}</td>
+                    </tr>
+                </tbody>
+
+                <ng-template #loading>
+                    <tbody *ngIf="!model.customersError">
+                        <tr>
+                            <td colspan="4">Loading...</td>
+                        </tr>
+                    </tbody>
+                </ng-template>
+            </table>
+            <ng-container *ngIf="model.customers as customers">
+                <div class="d-flex align-items-center justify-content-center">
+                    <app-pagination [totalPages]="customers.totalPages!" [currentPage]="currentPage"
+                    (pageChange)="loadCustomers($event)" />
+                </div>
+            </ng-container>
+
+        </ng-container>
+    </div>
+</div>
